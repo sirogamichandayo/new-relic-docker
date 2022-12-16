@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  new-relic-docker-server:
+    container_name: new-relic-docker-server
+    build:
+      context: ../
+      dockerfile: docker/docker-server.dockerfile
+    ports:
+      - "8080:8080"
+
+  new-relic-docker-agent:
+    container_name: new-relic-docker-agent
+    build:
+      context: ../
+      dockerfile: docker/docker-agent.dockerfile
+    cap_add:
+      - SYS_PTRACE
+    network_mode: host
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
